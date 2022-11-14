@@ -1,4 +1,6 @@
-const authorsModel =require('../models/authorsModel');
+const authorsModel = require('../models/authorsModel');
+
+
 const createAuthor = async function(req,res){
    try { let data =req.body
     if (Object.keys(data).length !=0){
@@ -14,3 +16,6 @@ else res.status(400).send({msg : "BAD REQUEST"})
    }
 }
 module.exports.createAuthor=createAuthor
+
+
+

@@ -1,10 +1,28 @@
 const express = require('express');
-const router= express.Router();
-const authorsController = require('../controllers/authorsController')
+const router = express.Router();
+
+
+const authorsController = require('../controllers/authorsController');
 const blogsController = require('../controllers/blogsController');
 
 
-router.get('/authors',authorsController.createAuthor)
+
+
+
+ router.post("/authors" ,authorsController.createAuthor  )
+
+ 
+
+
+ router.post("/blogs" , blogsController.createBlog  )
+
+ router.get("/blogs",  blogsController.getBlog )
+
+// router.put("/blogs/:blogId", blogsController )
+
+// router.delete("/blogs/:blogId", blogsController  )
+
+// router.delete("/blogs", blogsController  )                     // for queryParams
 
 
 
@@ -17,4 +35,7 @@ router.get('/authors',authorsController.createAuthor)
 
 
 
-module.exports=Router
+
+
+
+module.exports = router;

@@ -2,8 +2,12 @@ const express = require('express');
 const router = express.Router();
 
 
+
 const authorsController = require('../controllers/authorsController');
 const blogsController = require('../controllers/blogsController');
+const authMidd = require('../auth/middleware');
+
+
 
 
 
@@ -14,16 +18,33 @@ const blogsController = require('../controllers/blogsController');
  
 
 
- router.post("/blogs" , blogsController.createBlog  )
+ router.post("/blogs" , authMidd.midd1 , blogsController.createBlog  )       // midd1
 
- router.get("/blogs",  blogsController.getBlog )
 
-// router.put("/blogs/:blogId", blogsController )
 
-// router.delete("/blogs/:blogId", blogsController  )
 
-// router.delete("/blogs", blogsController  )                     // for queryParams
+ router.get("/blogs", authMidd.midd1, blogsController.getBlog )
 
+
+
+
+
+ router.put("/blogs/:blogId",authMidd.midd1,authMidd.authorisation, blogsController.updateblog )
+
+
+
+
+ router.delete("/blogs/:blogId",authMidd.midd1,authMidd.authorisation, blogsController.deleteBlogs  )
+
+
+ 
+
+ router.delete("/blogs",authMidd.midd1,authMidd.authorisation, blogsController.DeleteBlog)           // for queryParams
+
+
+//==============================for login==========================================//
+
+ router.post("/login" ,authorsController.authorslogin  )
 
 
 

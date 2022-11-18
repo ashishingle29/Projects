@@ -1,5 +1,7 @@
 const blogsModel = require("../models/blogsModel");
+const authorsModel = require("../models/authorsModel");
 const moment = require("moment");
+const jwt = require("jsonwebtoken");
 
 //========this is a function it will validate our condition includes undefined,null,string=================================//
 let IsVerified = function (value) {
@@ -35,6 +37,18 @@ const createBlog = async function (req, res) {
     if (!IsVerified(authorId)) {
       return res.status(400).send({ status: false, msg: "Author is required" });
     }
+    const ObjectId = require("mongodb").ObjectId;
+    const validId = ObjectId.isValid(authorId);
+    if (!validId) {
+      return res
+        .status(404)
+        .send({ status: false, msg: "Invalid AuthorId " });
+    }
+
+    let AuthorId = await authorsModel.find({_id:authorId})
+    if(AuthorId.length==0){ return res.status(400).send({ status: false, msg: "AuthorId doesn't exist in Database" });}
+
+
     if (!IsArr(tags)) {
       return res
         .status(400)
@@ -155,7 +169,7 @@ const updateblog = async function (req, res) {
   } catch (err) {
     //its a exception handler part if your logic will not excute by any
     console.log("It seems an error", err.message);
-    return res.status(404).send({ msg: "Error", error: err.message });
+    return res.status(500).send({ msg: "Error", error: err.message });
   }
 };
 
@@ -201,10 +215,17 @@ const deleteBlogs = async function (req, res) {
 const DeleteBlog = async function (req, res) {
   try {
     let queryParams = req.query;
+    
+
     const date = moment().format(); //FOR DATE
-    // is will update the isDeleted value false to true
-    const Blog = await blogsModel.updateMany(
-      { isDeleted: false, isPublished: true, ...queryParams },
+   
+    const Token = req.headers["x-api-key"];
+    const decodedtoken = jwt.verify(Token, "Secret-Key")
+    let id = decodedtoken.authorId
+
+ // is will update the isDeleted value false to true
+    const Blog = await blogsModel.updateOne(
+      { isDeleted: false, isPublished: true,authorId:id, ...queryParams },
       { $set: { isDeleted: true,isPublished:false } }
     );
 

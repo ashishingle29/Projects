@@ -141,7 +141,7 @@ const deleteByField = async function (req, res) {
             if (result[i].authorId == req.decode.authorId) {
 
                 await blogModel.findByIdAndUpdate({_id:result[i]._id}, {$set:{isDeleted:true, deletedAt: new Date().toLocaleString()}})
-                console.log(x)
+
                 return res.status(200).send({status:true, msg:"Deleted"})
             }
         }

@@ -28,7 +28,7 @@ const createAuthor = async function (req, res) {
    
 
         function isValidname(firstname){return (typeof firstname !== "string" ||/^[a-zA-Z]+$/.test(firstname))?true:false}
-        function upperCase(string){return string.replace(string[0], string[0].toUpperCase())}
+        function upperCase(string){return string.replace(string[0], string[0].toUpperCase())}   
 
         if(!fname){ return res.status(400).send({status:false, msg:"Please enter fname"})}
         if(!lname){return res.status(400).send({status:false, msg:"Please enter lname"}) }
@@ -46,7 +46,7 @@ const createAuthor = async function (req, res) {
         let checkEmail = validateEmail(email)           //it returns true/false
         if (!checkEmail) { return res.status(400).send({ status: false, msg: "Please enter a valid Email" }) }
         let authorData = await authorModel.find({email:email})
-        if(authorData.length != 0){return res.send({status:false, msg:"Account already created, Please login"})}
+        if(authorData.length != 0){return res.status(400).send({status:false, msg:"Account already created, Please login"})}
         
         let checkPass = checkPassword(password)
         if (!checkPass) { return res.status(400).send({ status: false, msg: "Please enter a valid Password" })}

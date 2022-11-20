@@ -1,8 +1,8 @@
 const { default: mongoose } = require("mongoose");
 
 
-const authorSchema = new mongoose.Schema(
-    { fname: {
+const authorSchema = new mongoose.Schema({
+     fname: {
         type:String,
         required:true
     },

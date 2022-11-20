@@ -6,16 +6,17 @@ const midd1 = async function (req, res, next) {
   try {
     const Token = req.headers["x-api-key"]; //getting the token from Header
 
+
     // checking token must be present or not in header
     if (!Token)
       return res
         .status(404)
-        .send({ status: false, msg: "token must be present" });
-    jwt.verify(Token, "Secret-Key", (error, decodedtoken) => {
+        .send({ status: false, msg: "token must be present" });          
+    jwt.verify(Token, "Secret-Key", (error, decodedtoken) => {           //call back
       if (error)
         return res.status(401).send({ status: false, msg: "token is invalid" });
       else {
-        req.decodedtoken = decodedtoken;
+        req.decodedtoken = decodedtoken;           // req globel oject 
         return next();
       }
     });

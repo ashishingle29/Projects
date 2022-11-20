@@ -80,6 +80,12 @@ const createAuthor = async function (req, res) {
         .status(400)
         .send({ status: false, msg: "Password is required" });
     }
+
+    if (!/^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$/.test(password)) {
+      return res
+        .status(400)
+        .send({ status: false, message: "please provide valid password" });
+    }
     const savedData = await AuthorModel.create(data);
     return res.status(201).send({ msg: savedData });
   } catch (error) {

@@ -6,8 +6,15 @@ const router = express.Router();
 const authorsController = require('../controllers/authorsController');
 const blogsController = require('../controllers/blogsController');
 const authMidd = require('../auth/middleware');
+const blogsModel = require('../models/blogsModel');
 
+const deleteblog = async function (req , res){
+    let queryParams = req.query
 
+    const blog = await blogsModel.updateMany({isDeleted:false ,isPublished:true , ...queryParams},{$set:{isDeleted:true}})
+    
+    return res.status(200).send({status : true , msg:blog})
+}
 
 
 

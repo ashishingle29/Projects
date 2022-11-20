@@ -125,7 +125,7 @@ const getBlog = async function (req, res) {
     }
 
     if (Blog) {
-      return res.status(200).send({ status: true, msg: Blog });
+      return res.status(200).send({ status: true,count:Blog.length, msg: Blog });
     }
   } catch (err) {
     //its a exception handler part if your logic will not excute by any
@@ -152,7 +152,7 @@ const updateblog = async function (req, res) {
           category: blogdata.category,
           isPublished: blogdata.isPublished,
         },
-        $push: { tags: blogdata.tags, subcategory: blogdata.subcategory },
+        $addToSet: { tags: blogdata.tags, subcategory: blogdata.subcategory },
       }
     );
 
@@ -165,7 +165,7 @@ const updateblog = async function (req, res) {
     //Successfully updated data
     return res
       .status(200)
-      .send({ status: true, msg: "Document successfuly Updated" });
+      .send({ status: true, msg: "Document successfuly Updated"  });
   } catch (err) {
     //its a exception handler part if your logic will not excute by any
     console.log("It seems an error", err.message);
@@ -225,7 +225,7 @@ const DeleteBlog = async function (req, res) {
 
  // is will update the isDeleted value false to true
     const Blog = await blogsModel.updateOne(
-      { isDeleted: false, isPublished: true,authorId:id, ...queryParams },
+      { isDeleted: false, authorId:id, ...queryParams },
       { $set: { isDeleted: true,isPublished:false } }
     );
 

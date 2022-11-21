@@ -5,9 +5,19 @@
 // };
 
 
-let a = "amana prajaat"
+let obj = {
+    a:5
+}
+console.log(obj)
+obj.b = "name"
 
-let x = a.match(/[0-9]/)
+console.log(obj)
 
-console.log(x)
+
+// You need to make the object first,
+//  then use [] to set it.
+//   var key = "happyCount"; 
+//   var obj = {}; obj[key] = someValueArray;
+//    myArray. push(obj);
+
 

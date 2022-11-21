@@ -27,8 +27,6 @@ const createIntern = async function (req, res) {
         
         function upperCase(string){return string.replace(string[0], string[0].toUpperCase())}
         data.fname = upperCase(name) 
-       //if(!isValidname(name)){ return res.status(400).send({status:false, message:"Please enter a valid name"})}
-       
       
         if (!validateEmail(email)) { return res.status(400).send({ status: false, message: "Please enter a valid Email" }) }
         
@@ -45,8 +43,7 @@ const createIntern = async function (req, res) {
         let dataByCollege = await collgeModel.findOne({name: collegeName})
         if(!dataByCollege){return res.status(400).send({status:false, message:"there is no intern with this college name"})} 
 
-        data.collegeId = dataByCollege._id
-        delete data.collegeName       
+        data.collegeId = dataByCollege._id       
        
         let result = await internModel.create(data)
         res.status(201).send({status: true, data: result})

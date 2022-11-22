@@ -22,7 +22,8 @@ const createCollege = async function (req, res) {
         function isValidname(firstname) {return (typeof firstname !== "string" || /^[a-zA-Z]+$/.test(firstname)) ? true : false }
 
         if (!isValidname(name)) {return res.status(400).send({ status: false, message: "Please enter a valid name" }) }
-        name = name.toLowerCase()
+        data.name = name.toLowerCase()
+        
 
         let dataByName = await collegeModel.findOne({ name: name })
         if (dataByName) {return res.status(400).send({ status: false, message: "This College alredy exits" }) }
@@ -47,6 +48,7 @@ const getColleges = async (req, res) => {
     try {
         let data = req.query.collegeName
         if (!data) { return res.status(400).send({ status: false, message: "Please enter college name in URL" }) }
+        data = data.toLowerCase() 
 
         let collegeData = await collegeModel.findOne({ name: data, isDeleted: false }).select({ isDeleted: 0, __v: 0 }).lean()
         if (!collegeData) { return res.status(404).send({ status: false, message: "College not found by this name" }) }

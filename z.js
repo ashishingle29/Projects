@@ -2,10 +2,9 @@
 
 
 
-let name = "  aman   "
 
-console.log(name.trim())
-
+let a = "Amna"
+console.log(a.toLowerCase())
 
 
 

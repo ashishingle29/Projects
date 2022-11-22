@@ -12,21 +12,20 @@ function validateEmail(email) {
 const createIntern = async function (req, res) {
     try {
         let data = req.body
-        if(Object.keys(data).length==0){res.status(400).send({status:false, message: "Please Provided Data"})}
-
+        if(Object.keys(data).length==0){return res.status(400).send({status:false, message: "Please Provided Data"})}
 
         let {name, email, mobile, collegeName} = data;
 
-        if(!name){res.status(400).send({status:false, message: "Please Enter name"})}
-        if(!email){res.status(400).send({status:false, message: "Please Enter email"})}
-        if(!mobile){res.status(400).send({status:false, message: "Please Enter mobile"})}
-        if(!collegeName){res.status(400).send({status:false, message: "Please Enter collegeName"})}
+        if(!name){return res.status(400).send({status:false, message: "Please Enter name"})}
+        if(!email){return res.status(400).send({status:false, message: "Please Enter email"})}
+        if(!mobile){return res.status(400).send({status:false, message: "Please Enter mobile"})}
+        if(!collegeName){return res.status(400).send({status:false, message: "Please Enter collegeName"})}
 
         let checkName = name.match(/[0-9]/)
         if(checkName || typeof(name) != "string"){ return res.status(400).send({status:false, message:"Please enter a valid name"})}       
         
-        function upperCase(string){return string.replace(string[0], string[0].toUpperCase())}
-        data.fname = upperCase(name) 
+        function upperCase(string){return string.replace(string[0], string[0].toUpperCase()).trim()}
+        data.name = upperCase(name) 
       
         if (!validateEmail(email)) { return res.status(400).send({ status: false, message: "Please enter a valid Email" }) }
         
@@ -38,8 +37,8 @@ const createIntern = async function (req, res) {
         let dataByMobile = await internModel.find({mobile:mobile})
         if(dataByMobile.length != 0){return res.status(400).send({status:false, message:"Mobile number already exits, please enter another mobile number"})}
        
-        collegeName = collegeName.toLowerCase()
-
+        collegeName = collegeName.toLowerCase().trim()
+        
         let dataByCollege = await collgeModel.findOne({name: collegeName})
         if(!dataByCollege){return res.status(400).send({status:false, message:"there is no intern with this college name"})} 
 

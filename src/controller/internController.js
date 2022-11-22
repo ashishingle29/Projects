@@ -2,12 +2,16 @@ const internModel = require('../models/internModel')
 const collgeModel = require("../models/collegeModel")
 
 
+
+//-------------Validation for Email----------------
+
 function validateEmail(email) {
     var re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,3}))$/;
     return re.test(email);
 }
 
 
+//---------API to create Interns---------------
 
 const createIntern = async function (req, res) {
     try {

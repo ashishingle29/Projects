@@ -56,14 +56,16 @@ const getColleges = async (req, res) => {
         if (!data) { return res.status(400).send({ status: false, message: "Please enter college name" }) }
         data = data.toLowerCase() 
 
-        let collegeData = await collegeModel.findOne({ name: data, isDeleted: false }).select({ isDeleted: 0, __v: 0 }).lean()
-        if (!collegeData) { return res.status(404).send({ status: false, message: "College not found by this name" }) }
-
+        let collegeData = await collegeModel.findOne({ name: data}).select({  __v: 0 }).lean()
+        if (!collegeData) { return res.status(404).send({ status: false, message: "College not found" }) }
+        if(collegeData.isDeleted == true){return res.status(404).send({status:false, message:"This College is Deleted"})}
+        
         let internData = await internModel.find({ collegeId: collegeData._id, isDeleted: false }).select({ collegeId: 0, isDeleted: 0, __v: 0 })
         if (internData.length == 0) { internData = "No intern found" }
 
         collegeData.interns = internData;
         delete collegeData._id
+        delete collegeData.isDeleted
 
         res.status(200).send({status:true, data:collegeData})
 

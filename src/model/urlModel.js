@@ -11,6 +11,7 @@ const urlModel = new mongoose.Schema({
     longUrl: {
         type: String,
         required: true,
+        trim: true
         
     },
     shortUrl: {

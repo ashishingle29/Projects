@@ -16,32 +16,29 @@ const userSchema = new mongoose.Schema({
     },
     profileImage: {
         type: String,
-        required:true
+        required: true
     },
     phone: {
         type: String,
-        required:true,
+        required: true,
         unique: true
     },
-
     password: {
         type: String,
         required: true
     },
-    
     address: {
         shipping: {
-            street: { type: String,required:true},
-            city: { type: String,required:true},
-            pincode: { type: Number,required:true}
+            street: { type: String, required: true },
+            city: { type: String, required: true },
+            pincode: { type: Number, required: true }
         },
-
         billing: {
-            street: { type: String,required:true},
-            city: { type: String,required:true},
-            pincode: { type: Number,required:true}
+            street: { type: String, required: true },
+            city: { type: String, required: true },
+            pincode: { type: Number, required: true }
         }
     }
 }, { timestamps: true });
 
-module.exports = mongoose.model('UserData',userSchema)
+module.exports = mongoose.model('UserData', userSchema)

@@ -1,0 +1,26 @@
+{
+  "name": "product-management-project",
+  "version": "1.0.0",
+  "description": "Shopping Cart management Project",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AnkushRai-222/Product-ManageMent-Project.git"
+  },
+  "author": "Ankush Rai, Ashish Ingle, Km arti",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/AnkushRai-222/Product-ManageMent-Project/issues"
+  },
+  "homepage": "https://github.com/AnkushRai-222/Product-ManageMent-Project#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^8.5.1",
+    "mongoose": "^6.8.0",
+    "nodemon": "^2.0.20"
+  }
+}

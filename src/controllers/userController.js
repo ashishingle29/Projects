@@ -58,7 +58,7 @@ const createUser = async function (req, res) {
   
     
         let url = await uploadFile(file[0]);
-        data["profileImage"] = url;
+        // data["profileImage"] = url;
       
   
       if (!phone)
@@ -87,71 +87,49 @@ const createUser = async function (req, res) {
    //..hashing
             const saltRounds = 10;
             const hash =  bcrypt.hashSync(password,saltRounds)
-            data.password = hash;
+            // data.password = hash;
       if (!address)
         return res
           .status(400)
           .send({ status: false, message: "Address is required" });
-  
-      if (!address.shipping)
-        return res
-          .status(400)
-          .send({ status: false, message: "Shipping address is required" });
-  
-      if (address.shipping) {
-        if (!address.shipping.street)
-          return res
-            .status(400)
-            .send({ status: false, message: "In shipping, street is mandatory" });
-    
-        if (!address.shipping.city)
-          return res
-            .status(400)
-            .send({ status: false, message: "In shipping, city is mandatory" });
-        
-        if (!address.shipping.pincode)
-          return res.status(400).send({
-            status: false,
-            message: "In shipping, pincode is mandatory",
-          });
-        if (address.shipping.pincode) {
-          if (!isValidPincode(address.shipping.pincode))
-            return res.status(400).send({
-              status: false,
-              message: "In shipping, pincode is invalid",
-            });
+          address = JSON.parse(address)
+        if (address) {
+            if (address.shipping) {
+                if (!valid(address.shipping.street)) {
+                  return  res.status(400).send({ status: false, Message: "Please provide street name in shipping address" })
+                  
+                }
+                if (!valid(address.shipping.city)) {
+                  return  res.status(400).send({ status: false, Message: "Please provide city name in shipping address" })
+                 
+                }
+                if (!valid(address.shipping.pincode)) {
+                  return res.status(400).send({ status: false, Message: "Please provide pincode in shipping address" })
+                  
+                }
+            }
+            if (address.billing) {
+                if (!valid(address.billing.street)) {
+                  return res.status(400).send({ status: false, Message: "Please provide street name in billing address" })
+                   
+                }
+                if (!valid(address.billing.city)) {
+                  return  res.status(400).send({ status: false, Message: "Please provide city name in billing address" })
+                   
+                }
+                if (!valid(address.billing.pincode)) {
+                  return res.status(400).send({ status: false, Message: "Please provide pincode in billing address" })
+                   
+                }
+            }
         }
-      }
-      if (!address.billing)
-        return res
-          .status(400)
-          .send({ status: false, message: "Billing address is required" });
-  
-      if (address.billing) {
-        if (!address.billing.street)
-          return res
-            .status(400)
-            .send({ status: false, message: "In billing, street is mandatory" });
-        
-        if (!address.billing.city)
-          return res
-            .status(400)
-            .send({ status: false, message: "In billing, city is mandatory" });
-       
-        if (!address.billing.pincode)
-          return res
-            .status(400)
-            .send({ status: false, message: "In billing, pincode is mandatory" });
-        if (address.billing.pincode) {
-          if (!isValidPincode(address.billing.pincode))
-            return res
-              .status(400)
-              .send({ status: false, message: "In billing, pincode is invalid" });
-        }
-      }
-  
 
-      const user = await userModel.create(data);
+    const userData = {
+            fname: fname, lname: lname, profileImage: url, email: email,
+            phone, password: hash, address: address
+        }
+
+      const user = await userModel.create(userData);
       return res.status(201).send({
         status: true,
         message: "user is successfully created",
@@ -175,6 +153,8 @@ const userLogin = async function (req, res) {
 
         const userData = await userModel.findOne({ email: email, password: password })
         if (!userData) { return res.status(404).send({ status: false, message: "Email or Password not found." }); }
+        const comparePassword = await bcrypt.compare( password, userData.password)
+        if(!comparePassword) return res.status(401).send({ status: false, msg: "Password is incorrect" })
 
         const token = jwt.sign(
             {

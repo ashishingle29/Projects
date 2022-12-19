@@ -15,7 +15,8 @@ const userSchema = new mongoose.Schema({
         required: true
     },
     profileImage: {
-        type: String
+        type: String,
+        required:true
     },
     phone: {
         type: String,
@@ -30,15 +31,15 @@ const userSchema = new mongoose.Schema({
     
     address: {
         shipping: {
-            street: { type: String},
-            city: { type: String},
-            pincode: { type: Number}
+            street: { type: String,required:true},
+            city: { type: String,required:true},
+            pincode: { type: Number,required:true}
         },
 
         billing: {
-            street: { type: String},
-            city: { type: String},
-            pincode: { type: Number}
+            street: { type: String,required:true},
+            city: { type: String,required:true},
+            pincode: { type: Number,required:true}
         }
 
     }

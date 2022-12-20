@@ -93,7 +93,7 @@ const  getProductBYQuery = async (req,res) =>{
             filterQuery.price = {$lt:priceLessThan}
          }
 
-         const productData = await produtModel.find(filterQuery).sort({price:1})
+         const productData = await productModel.find(filterQuery).sort({price:1})
          if (productData.length == 0)
             return res.status(404).send({ status: false, message: "No product found" });
 
@@ -114,7 +114,7 @@ const getProduct = async (req,res) =>{
         return res.status(400).send({status:false,message:"Please Provide Valid Product Id"})
     }
 
-    const productData = await produtModel.findOne({_id:productId,isDeleted:false})
+    const productData = await productModel.findOne({_id:productId,isDeleted:false})
     if(!productData){
         return res.status(404).send({status:false,message:"Product Data not Found"})
     }

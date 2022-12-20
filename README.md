@@ -479,3 +479,34 @@ Refer below sample
   updatedAt: "2021-09-17T04:25:07.803Z",
 }
 ```
+
+
+
+
+<!-- if (!address)
+        return res.status(400).send({ status: false, message: "Address is required" });
+          address = JSON.parse(address)
+        if (address) {
+            if (address.shipping) {
+                if (!valid(address.shipping.street)) {
+                  return  res.status(400).send({ status: false, Message: "Please provide street name in shipping address" })  
+                }
+                if (!valid(address.shipping.city)) {
+                  return  res.status(400).send({ status: false, Message: "Please provide city name in shipping address" }) 
+                }
+                if (!valid(address.shipping.pincode)) {
+                  return res.status(400).send({ status: false, Message: "Please provide pincode in shipping address" }) 
+                }
+            }
+            if (address.billing) {
+                if (!valid(address.billing.street)) {
+                  return res.status(400).send({ status: false, Message: "Please provide street name in billing address" })   
+                }
+                if (!valid(address.billing.city)) {
+                  return  res.status(400).send({ status: false, Message: "Please provide city name in billing address" })}
+                if (!valid(address.billing.pincode)) {
+                  return res.status(400).send({ status: false, Message: "Please provide pincode in billing address" })  
+                }
+                //validPincode baki hai
+            }
+        } -->

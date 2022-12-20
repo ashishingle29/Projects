@@ -29,7 +29,7 @@ const createUser = async function (req, res) {
 
     if (file && file.length == 0) { return res.status(400).send({ status: false, message: "ProfileImage is a mandatory" }); }
 
-    // if (!validImg(file.originalname)) { return res.status(400).send({ status: false, message: "Please provide image in jpg|gif|png|jpeg|jfif" }); }
+   if (!validImg(file[0])) { return res.status(400).send({ status: false, message: "Please provide image in gif|png|jpg|jpeg|webp|svg|psd|bmp|tif|jfif" }); }
 
     let url = await uploadFile(file[0]);
 

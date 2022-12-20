@@ -35,9 +35,9 @@ const validObjectId = function (objectId) {
     return mongoose.Types.ObjectId.isValid(objectId)
 }
 
-const validImg = (img) => {
-    const reg = /.+\.(?:(jpg|gif|png|jpeg|jfif))/;
-    return reg.test(img);
-};
+const validImg = function(imageLink){
+    const logoRegex = /^https?:\/\/(.+\/)+.+(\.(gif|png|jpg|jpeg|webp|svg|psd|bmp|tif|jfif))$/i
+    return logoRegex.test(imageLink)
+}
 
 module.exports = { validName, validPhone, validEmail, validValue, validPincode, validImg, validPassword, validObjectId }

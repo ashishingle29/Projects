@@ -151,43 +151,72 @@ const updateUser = async function (req, res) {
 
     const data = req.body;
     if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
+    const file = req.files
+    let { fname, lname, email, profileImage, phone, password, address } = data;
+    
+   
+    if(fname){
+          if (!validName(fname)) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
+         
+    }
+     if(lname){
+           if (!validName(lname)) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
+          
+      }
+      if(email){
+            if (!validEmail(email)) { return res.status(400).send({ status: false, message: "Please provide correct email" }); }
+             let findEmail = await userModel.findOne({ email });
+             if (findEmail) { return res.status(400).send({ status: false, message: "User with this email already exists" }); }
+            
+      }
+      if (file && file.length > 0) {
+            let url = await uploadFile(file[0]);
+           data.profileImage = url
+      }
+      if(phone){
+            if (!validPhone(phone)) { return res.status(400).send({ status: false, message: "Please provide correct phone number" }); }
+            let findPhone = await userModel.findOne({ phone });
+            if (findPhone) { return res.status(400).send({ status: false, message: "User with this phone number already exists" }); }
+            
+      }
+    if(password){
+         if (!validPassword(password)) { return res.status(400).send({ status: false, message: "Password Should be (8-15) in length with one upperCase, special character and number" }); }
+         const saltRounds = 10;
+       data.password = bcrypt.hashSync(password, saltRounds)
+    }
+  
+  if(address){
+    address = JSON.parse(address)
 
-    const { fname, lname, email, profileImage, phone, password, address } = data;
+    let { shipping, billing } = address
 
-    if (!validName(fname)) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
-
-    if (!validName(lname)) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
-
-    if (!validEmail(email)) { return res.status(400).send({ status: false, message: "Please provide correct email" }); }
-    let findEmail = await userModel.findOne({ email });
-    if (findEmail) { return res.status(400).send({ status: false, message: "User with this email already exists" }); }
-
-    let url = await uploadFile(file[0]);
-
-    if (!validPhone(phone)) { return res.status(400).send({ status: false, message: "Please provide correct phone number" }); }
-    let findPhone = await userModel.findOne({ phone });
-    if (findPhone) { return res.status(400).send({ status: false, message: "User with this phone number already exists" }); }
-
-    if (!validPassword(password)) { return res.status(400).send({ status: false, message: "Password Should be (8-15) in length with one upperCase, special character and number" }); }
-
+    if (!shipping) { return res.status(400).send({ status: false, message: "Shipping Address is mandatory" }); }
     if (shipping) {
+      if (!shipping.street) { return res.status(400).send({ status: false, message: "Shipping Street is mandatory" }); }
       if (!validValue(shipping.street)) { return res.status(400).send({ status: false, Message: "Please provide street name in string format" }); }
 
+      if (!shipping.city) { return res.status(400).send({ status: false, message: "Shipping City is mandatory" }); }
       if (!validValue(shipping.city)) { return res.status(400).send({ status: false, Message: "Please provide city name in string format" }); }
 
+      if (!shipping.pincode) { return res.status(400).send({ status: false, message: "Shipping Pincode is mandatory" }); }
       if (!validPincode(shipping.pincode)) { return res.status(400).send({ status: false, Message: "Please provide pincode in number format" }); }
     }
 
     if (!billing) { return res.status(400).send({ status: false, message: "Billing Address is required" }); }
     if (billing) {
+      if (!billing.street) { return res.status(400).send({ status: false, message: "Billing Street is mandatory" }); }
       if (!validValue(billing.street)) { return res.status(400).send({ status: false, Message: "Please provide street name in string format" }); }
 
+      if (!billing.city) { return res.status(400).send({ status: false, message: "Billing City is mandatory" }); }
       if (!validValue(billing.city)) { return res.status(400).send({ status: false, Message: "Please provide city name in string format" }); }
 
+      if (!billing.pincode) { return res.status(400).send({ status: false, message: "Billing Pincode is mandatory" }); }
       if (!validPincode(billing.pincode)) { return res.status(400).send({ status: false, Message: "Please provide pincode in number format" }); }
     }
+    data.address = address
+  }
 
-    const userdata = await userModel.findOneAndUpdate({ userId: userId }, ...data);
+    const userdata = await userModel.findOneAndUpdate({ _id: userId },{$set:data},{new:true});
 
     return res.status(200).send({ status: true, message: "User profile updated", data: userdata });
   }

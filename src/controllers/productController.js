@@ -49,7 +49,7 @@ const createproduct = async function (req, res) {
       //...........................ProductImage...............................
         if (file && file.length == 0) { return res.status(400).send({ status: false, message: "productImage is a mandatory" }); }
         if(file && file.length > 0){
-        if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in gif|png|jpg|jpeg|webp|svg|psd|bmp|tif|jfif" }); }
+        if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in jpg|gif|png|jpeg|jfif "}); }
         }
         let url = await uploadFile(file[0]);
         data.productImage=url
@@ -214,7 +214,7 @@ const updateProduct = async function (req, res) {
             }
         }
         if (file && file.length > 0) {
-              if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in gif|png|jpg|jpeg|webp|svg|psd|bmp|tif|jfif" }); }
+              if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in jpg|gif|png|jpeg|jfif " }); }
               let url = await uploadFile(file[0]);
              data.productImage = url
         }

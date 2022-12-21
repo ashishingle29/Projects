@@ -11,7 +11,7 @@ router.get('/user/:userId/profile', userController.getUser);
 router.put('/user/:userId/profile', userController.updateUser);
 
 //......................Product.........................
-
+router.post('/products',productController.createproduct)
 router.get('/products',productController.getProductBYQuery)
 router.get('/products/:productId',productController.getProduct)
 

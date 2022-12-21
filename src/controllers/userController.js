@@ -2,7 +2,7 @@ const uploadFile = require("../aws/aws");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const { validPhone, validEmail, validValue, validName, validPincode, validObjectId, validImg, validPassword } = require("../validator/validation");
+const { validPhone, validEmail, validValue, isValidImg,validName, validPincode, validObjectId, validPassword } = require("../validator/validation");
 
 //-------------------------------------[ CREATE USER ]---------------------------------------//
 
@@ -28,9 +28,9 @@ const createUser = async function (req, res) {
     if (findEmail) { return res.status(400).send({ status: false, message: "User with this email already exists" }); }
 
     if (file && file.length == 0) { return res.status(400).send({ status: false, message: "ProfileImage is a mandatory" }); }
-
-   if (!validImg(file[0])) { return res.status(400).send({ status: false, message: "Please provide image in gif|png|jpg|jpeg|webp|svg|psd|bmp|tif|jfif" }); }
-
+    if (file && file.length > 0) {
+      if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in gif|png|jpg|jpeg|webp|svg|psd|bmp|tif|jfif" }); } 
+    }
     let url = await uploadFile(file[0]);
 
     if (!phone) { return res.status(400).send({ status: false, message: "Phone is mandatory" }); }
@@ -170,6 +170,7 @@ const updateUser = async function (req, res) {
             
       }
       if (file && file.length > 0) {
+            if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in gif|png|jpg|jpeg|webp|svg|psd|bmp|tif|jfif" }); }
             let url = await uploadFile(file[0]);
            data.profileImage = url
       }

@@ -16,10 +16,10 @@ const createUser = async function (req, res) {
     let { fname, lname, email, phone, password, address } = data;
 
     if (!fname) { return res.status(400).send({ status: false, message: "FirstName is mandatory" }); }
-    if (!validName(fname)) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
+    if (!validName(fname.trim())) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
 
     if (!lname) { return res.status(400).send({ status: false, message: "lastName is mandatory" }); }
-    if (!validName(lname)) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
+    if (!validName(lname.trim())) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
 
     if (!email) { return res.status(400).send({ status: false, message: "Email is mandatory" }); }
     if (!validEmail(email)) { return res.status(400).send({ status: false, message: "Please provide correct email" }); }
@@ -156,11 +156,11 @@ const updateUser = async function (req, res) {
     
    
     if(fname){
-          if (!validName(fname)) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
+          if (!validName(fname.trim())) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
          
     }
      if(lname){
-           if (!validName(lname)) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
+           if (!validName(lname.trim())) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
           
       }
       if(email){

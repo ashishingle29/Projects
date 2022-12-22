@@ -1,7 +1,7 @@
 const { isValidObjectId } = require('mongoose');
 const uploadFile = require("../aws/aws");
 const productModel = require("../models/productModel");
-const { validName, isValidImg} = require("../validator/validation");
+const { validName, isValidImg, validValue} = require("../validator/validation");
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<CREATE_PRODUCT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const createproduct = async function (req, res) {
@@ -10,19 +10,21 @@ const createproduct = async function (req, res) {
         let file = req.files;
 
         if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
-        let { title,description,price,currencyId,currencyFormat,isFreeShipping,productImage,style,availableSizes,installments} = data;
+        let { title,description,price,currencyId,currencyFormat,isFreeShipping,style,availableSizes,installments} = data;
       //..............................title..........................
-      data.title =data.title.toLowerCase()
+         
       
         if (!title) { return res.status(400).send({ status: false, message: "Title is mandatory" }); }
-        if (!validName(title.trim())) { return res.status(400).send({ status: false, message: "Title should be in alphabets only" }); }
-        let findtitle = await productModel.findOne({ title });
+        if(title){
+          data.title =data.title.toLowerCase()
+        if (!validValue(title)) { return res.status(400).send({ status: false, message: "Title should be in String Format" }); }
+        let findtitle = await productModel.findOne({title:data.title});
         if (findtitle) { return res.status(400).send({ status: false, message: " this title already exists" }); }
-
+    }
        //................................description.......................
 
         if (!description) { return res.status(400).send({ status: false, message: "description is mandatory" }); }
-        if (!validName(description.trim())) { return res.status(400).send({ status: false, message: "description should be in alphabets only" }); }
+        if (!validValue(description)) { return res.status(400).send({ status: false, message: "description should be in String Format" }); }
 
       //...............................Price.................................
         if (!price) { return res.status(400).send({ status: false, message: "Price is mandatory" }); }
@@ -54,7 +56,9 @@ const createproduct = async function (req, res) {
         let url = await uploadFile(file[0]);
         data.productImage=url
      //.................................Style.............................
-        if (!validName(style.trim())) { return res.status(400).send({ status: false, message: "style should be in alphabets only" }); }
+     if(style){
+        if (!validValue(style)) { return res.status(400).send({ status: false, message: "style should be in String format" }); }
+      }
       //..............................AvailableSize.........................
         if (!availableSizes) { return res.status(400).send({ status: false, message: "availableSizes is mandatory" }); }
 
@@ -65,7 +69,7 @@ const createproduct = async function (req, res) {
           present = arr.includes(size[i])
         }
         if (!present) {
-            return res.status(400).send({ status: false, message: "Enter a valid size S or XS or M or X or L or XXL or XL ", });
+            return res.status(400).send({ status: false, message: "Enter a valid size S or XS or M or X or L or XXL or XL "});
         }
        data['availableSizes'] = size
 
@@ -73,10 +77,10 @@ const createproduct = async function (req, res) {
         if(installments){
           if (!/^[0-9]*$/.test(installments)) {
             return res.status(400).send({ status: false, message: "installments should be in Number" });
+          }
         }
-    }
        let createdproduct = await productModel.create(data)
-       return res.status(201).send({ status: true, message: "Success", data: createdproduct })
+       return res.status(201).send({ status: true, message: "Product has Successfully Created", data: createdproduct })
 
    }
    catch (err) {
@@ -108,10 +112,10 @@ const  getProductBYQuery = async (req,res) =>{
             filterQuery.availableSizes = {$in:size}
          }
          if(name){
-           data.name =data.name.toLowerCase()
+            data.name =data.name.toLowerCase()
 
-            if(!validName(name.trim())){
-                return res.status(400).send({status:false,message:"name is only in alphabet"})
+            if(!validValue(name)){
+                return res.status(400).send({status:false,message:"name is only in String Format"})
             }
             filterQuery.title ={$regex: name}
          }
@@ -174,21 +178,27 @@ const updateProduct = async function (req, res) {
         if(!isValidObjectId(productId)){
             return res.status(400).send({status:false,message:"Please Provide Valid Product Id"})
         }
+        const findProductId = await productModel.findOne({_id:productId,isDeleted:false})
+        if(!findProductId){
+          return res.status(404).send({status:false,message:"Product not found"})
+        }
 
       const data = req.body;
       if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
       const file = req.files
       let { title,description,price,currencyId,currencyFormat,isFreeShipping,productImage,style,availableSizes,installments} = data;
       
-     
+      
+
       if(title){
-        if (!validName(title.trim())) { return res.status(400).send({ status: false, message: "Title should be in alphabets only" }); }
-        let findtitle = await productModel.findOne({ title });
+        data.title =data.title.toLowerCase()
+        if (!validValue(title)) { return res.status(400).send({ status: false, message: "Title should be in String format" }); }
+        let findtitle = await productModel.findOne({ title:data.title });
         if (findtitle) { return res.status(400).send({ status: false, message: " this title already exists" }); }
        
       }
        if(description){
-        if (!validName(description.trim())) { return res.status(400).send({ status: false, message: "description should be in alphabets only" }); }
+        if (!validValue(description)) { return res.status(400).send({ status: false, message: "description should be in String format" }); }
             
         }
         if(price){
@@ -218,7 +228,7 @@ const updateProduct = async function (req, res) {
               let url = await uploadFile(file[0]);
              data.productImage = url
         }
-        if(style){if (!validName(style.trim())) { return res.status(400).send({ status: false, message: "style should be in alphabets only" }); }}
+        if(style){if (!validValue(style)) { return res.status(400).send({ status: false, message: "style should be in String format" }); }}
         if(availableSizes){   
           size = availableSizes.replace(/\s+/g, "").split(",")  
           let arr = ["S", "XS", "M", "X", "L", "XXL", "XL"]
@@ -272,4 +282,3 @@ module.exports ={getProduct,getProductBYQuery,createproduct,updateProduct,delete
 
 
          
-

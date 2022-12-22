@@ -18,7 +18,7 @@ const validEmail = function (email) {
 const validValue = function (data) {
     if (typeof (data) === undefined || typeof (data) === null) { return false }
     if (typeof (data) === "string" && data.trim().length > 0) { return true }
-    // if (typeof (data) === "number" && data.trim().length > 0) { return true }
+    if (typeof (data) === "number" && data.trim().length > 0) { return true }
 }
 
 const validPincode = function (data) {

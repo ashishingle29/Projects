@@ -99,9 +99,13 @@ const loginUser = async function (req, res) {
 
     if (!email) { return res.status(400).send({ status: false, messsage: "Email is required" }); }
     if (!validValue(email)) { return res.status(400).send({ status: false, Message: "Please provide email in string format" }); }
+    if (!validEmail(email)) { return res.status(400).send({ status: false, message: "Please provide correct email" }); }
+
 
     if (!password) { return res.status(400).send({ status: false, messsage: "Password is required" }); }
     if (!validValue(password)) { return res.status(400).send({ status: false, Message: "Please provide password in string format" }); }
+    if (!validPassword(password)) { return res.status(400).send({ status: false, message: "Password Should be (8-15) in length with one upperCase, special character and number" }); }
+
 
     const userData = await userModel.findOne({ email: email })
     if (!userData) { return res.status(404).send({ status: false, message: "Email is incorrect" }); }
@@ -152,7 +156,7 @@ const updateUser = async function (req, res) {
     const data = req.body;
     if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
     const file = req.files
-    let { fname, lname, email, profileImage, phone, password, address } = data;
+    let { fname, lname, email, phone, password, address } = data;
     
    
     if(fname){

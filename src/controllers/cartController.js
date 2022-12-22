@@ -26,8 +26,8 @@ const createCart = async (req,res) =>{
          
 
         if(cartId){
-      if (!validValue(cartId)) { return res.status(400).status({ status: false, message: "cardId should not be empty" })}  
-        if(!isValidObjectId(productId))return res.status(400).send({status:false,message:"Please provide a valid cartId"})
+         if (!validValue(cartId)) { return res.status(400).status({ status: false, message: "cardId should not be empty" })}  
+         if(!isValidObjectId(productId))return res.status(400).send({status:false,message:"Please provide a valid cartId"})
         }
         //....................cartId....................................
 

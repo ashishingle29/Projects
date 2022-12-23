@@ -19,6 +19,8 @@ const authentication = async function(req,res,Next){
           }
           else {
             req.decodedToken = decoded
+
+            console.log(decoded) 
             Next()
           }
         })

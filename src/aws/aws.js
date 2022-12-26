@@ -16,10 +16,13 @@ let uploadFile = async (file) =>{
             Key: "abc/" + file.originalname, 
             Body: file.buffer
         }
+
         s3.upload(uploadParams,function(err,data){
             if(err){
                 return reject({"error":err})
             }
+
+            console.log(file.buffer)
             console.log("File uploaded succesfully")
             return resolve(data.Location)
         }) 

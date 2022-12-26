@@ -7,11 +7,15 @@ const userModel = require('../models/userModel')
 const authentication = async function(req,res,Next){
     try {
         let token = req.headers["authorization"];
+     
         if (!token) {
           return res.status(400).send({ status: false, message: "Token must be present." });
         }
-  
-       token = token.split(" ")[1]
+        
+        //  token = token.split(" ")[1]
+        token = token.replace("Bearer ","")
+       
+
         jwt.verify(token, 'project5group22', function (error, decoded) { 
     
           if (error) {
@@ -20,7 +24,7 @@ const authentication = async function(req,res,Next){
           else {
             req.decodedToken = decoded
 
-            console.log(decoded) 
+          
             Next()
           }
         })

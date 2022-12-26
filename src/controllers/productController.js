@@ -186,8 +186,10 @@ const updateProduct = async function (req, res) {
         }
         const data = req.body;
         const file = req.files
-        if (Object.keys(data).length == 0 && file.length ==0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
+        // if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
         
+        // if(file.length ==0){ return res.status(400).send({ status: false, message: "Please give some data1" }); }
+
         let { title,description,price,currencyId,currencyFormat,isFreeShipping,productImage,style,availableSizes,installments} = data;
         const Updateobj ={}
       

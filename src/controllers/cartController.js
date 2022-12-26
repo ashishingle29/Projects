@@ -96,7 +96,7 @@ const updateCart = async function (req,res){
         const productCheck = await productModel.findOne({_id:productId, isDeleted:false})
         if(!productCheck){ return res.status(404).send({status: false, message: "productId not found"})} 
         
-        // if(!removeProduct){ return res.status(400).send({status: false, message: "removeProduct is required"})}
+        if(!removeProduct){ return res.status(400).send({status: false, message: "removeProduct is required"})}
         if(removeProduct != 0 && removeProduct != 1){ return res.status(400).send({status:false, message: "please input a Number 0 or 1 in removeProduct Key"})}
         if(cartCheck.items.length ==0){ return res.status(400).send({status: false, message: "No product found in items"})}
 

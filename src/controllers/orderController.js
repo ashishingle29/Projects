@@ -1,19 +1,29 @@
 const { isValidObjectId } = require('mongoose');
 const cartModel = require('../models/cartModel')
 const productModel = require("../models/productModel");
-const userModel = require('../models/userModel');
+const orderModel  = require('../models/orderModel')
+const userModel = require("../models/userModel");
+const{validValue} = require('../validator/validation')
 
 
-//<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< UPDATE-API >>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
+//......................Create Order.........................
 
-
-const updateOrder = async (req,res) =>{
+const createOrder = function(req,res){
     try{
-    
 
-        const userId = req.params.userId
-    }
-    catch(err){
-        return res.status(500).send({status:false,message:err.message})
+    }catch(error){
+        res.status(500).send({status:false, message:error.message})
     }
 }
+
+
+//.....................Update Order..........................
+const UpdateOrder = function(req,res){
+    try{
+
+    }catch(error){
+        res.status(500).send({status:false, message:error.message})
+    }
+}
+
+module.exports = {createOrder,UpdateOrder}

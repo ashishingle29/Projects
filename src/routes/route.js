@@ -3,10 +3,10 @@ const router = express.Router();
 const userController = require('../controllers/userController');
 const productController = require('../controllers/productController')
 const cartController = require('../controllers/cartController')
+const orderController = require('../controllers/orderController')
 const {authorization,authentication} = require('../middleware/auth')
 
 //......................User.........................
-
 router.post('/register',userController.createUser);
 router.post('/login',userController.loginUser);
 router.get('/user/:userId/profile', authentication,userController.getUser);
@@ -20,10 +20,14 @@ router.put('/products/:productId',productController.updateProduct)
 router.delete('/products/:productId',productController.deleteproduct)
 
 //.......................CART................................
-router.post('/users/:userId/cart',cartController.createCart)
-router.get('/users/:userId/cart',cartController.getCart)
-router.put('/users/:userId/cart',cartController.updateCart)
-router.delete('/users/:userId/cart',cartController.deleteCart)
+router.post('/users/:userId/cart',authentication,authorization,cartController.createCart)
+router.get('/users/:userId/cart',authentication,authorization,cartController.getCart)
+router.put('/users/:userId/cart',authentication,authorization,cartController.updateCart)
+router.delete('/users/:userId/cart',authentication,authorization,cartController.deleteCart)
+
+//.........................ORDER...................................
+router.post('/users/:userId/orders',authentication,authorization,orderController.createOrder)
+router.put('/users/:userId/orders',authentication,authorization,orderController.UpdateOrder)
 
 
 

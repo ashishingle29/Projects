@@ -33,12 +33,14 @@ const createproduct = async function (req, res) {
         }
       //...........................CurrencyId.................................
         if (!currencyId) { return res.status(400).send({ status: false, message: "currencyId is mandatory"});}
-
-          if (currencyId && currencyId != "INR") {
-            return res.status(400).send({status: false,message: "Only 'INR' CurrencyId is allowed"});
-          }
+        
+        if (currencyId && currencyId != "INR") {
+          return res.status(400).send({status: false,message: "Only 'INR' CurrencyId is allowed"});
+        }
       //...........................CurrencyFormat.................................
-          if (currencyFormat && currencyFormat != "₹") {
+      
+      if (!currencyFormat) { return res.status(400).send({ status: false, message: "currencyFormat is mandatory"});}
+      if (currencyFormat && currencyFormat != "₹") {
             return res.status(400).send({status: false,message: "Only '₹' Currency Symbol is allowed"});
           }
 
@@ -80,7 +82,7 @@ const createproduct = async function (req, res) {
           }
         }
        let createdproduct = await productModel.create(data)
-       return res.status(201).send({ status: true, message: "Product has Successfully Created", data: createdproduct })
+       return res.status(201).send({ status: true, message: "Success", data: createdproduct })
 
    }
    catch (err) {
@@ -141,7 +143,7 @@ const  getProductBYQuery = async (req,res) =>{
          if (productData.length == 0)
             return res.status(404).send({ status: false, message: "No product found" });
 
-        return res.status(200).send({status:true,message:"product list",data:productData})
+        return res.status(200).send({status:true,message:"Success",data:productData})
 
     }
     catch(err){
@@ -163,7 +165,7 @@ const getProduct = async (req,res) =>{
         return res.status(404).send({status:false,message:"Product Data not Found"})
     }
 
-    return res.status(200).send({ status: true, message: 'Product list', data: productData });
+    return res.status(200).send({ status: true, message: 'Success', data: productData });
     }
     catch(err){
         return res.status(500).send({status:false,message:err.message})
@@ -262,7 +264,7 @@ const updateProduct = async function (req, res) {
     
       const productdata = await productModel.findOneAndUpdate({ _id: productId },{$set:Updateobj},{new:true});
   
-      return res.status(200).send({ status: true, message: "productId profile updated", data: productdata  });
+      return res.status(200).send({ status: true, message: "Success", data: productdata  });
     }
     catch (error) {
       return res.status(500).send({ status: false, message: error.message });

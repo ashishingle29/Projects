@@ -1,7 +1,7 @@
 const { isValidObjectId } = require('mongoose');
 const uploadFile = require("../aws/aws");
 const productModel = require("../models/productModel");
-const { validName, isValidImg, validValue} = require("../validator/validation");
+const { isValidBody, isValidImg, validValue} = require("../validator/validation");
 
 //<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<CREATE_PRODUCT>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>
 const createproduct = async function (req, res) {
@@ -34,7 +34,7 @@ const createproduct = async function (req, res) {
       //...........................CurrencyId.................................
         if (!currencyId) { return res.status(400).send({ status: false, message: "currencyId is mandatory"});}
         
-        if (currencyId && currencyId != "INR") {
+        if (currencyId != "INR") {
           return res.status(400).send({status: false,message: "Only 'INR' CurrencyId is allowed"});
         }
       //...........................CurrencyFormat.................................
@@ -53,8 +53,7 @@ const createproduct = async function (req, res) {
       //...........................ProductImage...............................
         if (file && file.length == 0) { return res.status(400).send({ status: false, message: "productImage is a mandatory" }); }
         if(file && file.length > 0){
-        if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in jpg|gif|png|jpeg|jfif "}); }
-        }
+        if (!isValidImg(file[0].originalname)) { return res.status(400).send({ status: false, message: "Please provide image in jpg|gif|png|jpeg|jfif "}); }}
         let url = await uploadFile(file[0]);
         data.productImage=url
      //.................................Style.............................
@@ -186,10 +185,8 @@ const updateProduct = async function (req, res) {
         }
         const data = req.body;
         const file = req.files
-        // if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
+        if (!isValidBody(data) && (typeof(file)=="undefined")) { return res.status(400).send({ status: false, message: "Please give some data" }); }
         
-        // if(file.length ==0){ return res.status(400).send({ status: false, message: "Please give some data1" }); }
-
         let { title,description,price,currencyId,currencyFormat,isFreeShipping,productImage,style,availableSizes,installments} = data;
         const Updateobj ={}
       

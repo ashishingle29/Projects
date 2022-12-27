@@ -2,7 +2,7 @@ const uploadFile = require("../aws/aws");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const { validPhone, validEmail, validValue, isValidImg,validName, validPincode, validObjectId, validPassword, isValidBody } = require("../validator/validation");
+const { validPhone, validEmail, validValue, isValidImg, validName, validPincode, validObjectId, validPassword, isValidBody } = require("../validator/validation");
 
 //-------------------------------------[ CREATE USER ]---------------------------------------//
 
@@ -23,28 +23,30 @@ const createUser = async function (req, res) {
     if (!password) { return res.status(400).send({ status: false, message: "Password is mandatory" }); }
     if (!address) { return res.status(400).send({ status: false, message: "Address is required" }); }
     
-    address = JSON.parse(address)
-    let { shipping, billing } = address
-    if (!shipping) { return res.status(400).send({ status: false, message: "Shipping Address is mandatory" }); }
-    if (!billing) { return res.status(400).send({ status: false, message: "Billing Address is required" }); }
-
+    
     if (!validName(fname.trim())) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
     if (!validName(lname.trim())) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
-
+    
     if (!validEmail(email)) { return res.status(400).send({ status: false, message: "Please provide correct email" }); }
     let findEmail = await userModel.findOne({ email });
     if (findEmail) { return res.status(400).send({ status: false, message: "User with this email already exists" }); }
-
+    
     if (!validPhone(phone)) { return res.status(400).send({ status: false, message: "Please provide correct phone number" }); }
     let findPhone = await userModel.findOne({ phone });
     if (findPhone) { return res.status(400).send({ status: false, message: "User with this phone number already exists" }); }
     
     if (!validPassword(password)) { return res.status(400).send({ status: false, message: "Password Should be (8-15) in length with one upperCase, special character and number" }); }
-
-  
+    
+    
     //..hashing
     const saltRounds = 10;
     const hash = bcrypt.hashSync(password, saltRounds)
+    
+    address = JSON.parse(address)
+    let { shipping, billing } = address
+
+    if (!shipping) { return res.status(400).send({ status: false, message: "Shipping Address is mandatory" }); }
+    if (!billing) { return res.status(400).send({ status: false, message: "Billing Address is required" }); }
 
     if (shipping) {
       if (!shipping.street) { return res.status(400).send({ status: false, message: "Shipping Street is mandatory" }); }
@@ -96,11 +98,11 @@ const loginUser = async function (req, res) {
     const { email, password } = data
 
     if (!email) { return res.status(400).send({ status: false, messsage: "Email is required" }); }
+    if (!password) { return res.status(400).send({ status: false, messsage: "Password is required" }); }
+    
     if (!validValue(email)) { return res.status(400).send({ status: false, Message: "Please provide email in string format" }); }
     if (!validEmail(email)) { return res.status(400).send({ status: false, message: "Please provide correct email" }); }
 
-
-    if (!password) { return res.status(400).send({ status: false, messsage: "Password is required" }); }
     if (!validValue(password)) { return res.status(400).send({ status: false, Message: "Please provide password in string format" }); }
     if (!validPassword(password)) { return res.status(400).send({ status: false, message: "Password Should be (8-15) in length with one upperCase, special character and number" }); }
 
@@ -111,13 +113,9 @@ const loginUser = async function (req, res) {
     const comparePassword = await bcrypt.compare(password, userData.password)
     if (!comparePassword) { return res.status(401).send({ status: false, msg: "Password is incorrect" }); }
 
-    const token = jwt.sign(
-      {
-                                //token contain iat, exp, userId
-        userId: userData._id
-      },
-      "project5group22", { expiresIn: "5h" }
-    )
+    //token contain iat, exp, userId 
+    const token = jwt.sign({ userId: userData._id }, "project5group22", { expiresIn: "5h" } )
+
     return res.status(200).send({ status: true, message: "User login successfull", data: { userId: userData._id, token: token } })
   }
   catch (error) {

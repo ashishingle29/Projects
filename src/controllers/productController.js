@@ -272,11 +272,10 @@ const deleteproduct = async function (req, res) {
   try {
     let productId = req.params.productId
     if (!validObjectId(productId)) { return res.status(400).send({ status: false, message: 'productId is a not a valid productId' }) }
-
-    let productdata = await productModel.findById(productId)
-    if (!productdata) { return res.status(404).send({ status: false, message: "No product exists with the productid" }) }
-    if (productdata.isDeleted === true) { return res.status(400).send({ status: false, message: "product is already deleted" }) }
-
+    
+    let productdata = await productModel.findOne({_id:productId,isDeleted:false})
+    if (!productdata) { return res.status(404).send({ status: false, message: "Product not Found" }) }
+    
     await productModel.findOneAndUpdate({ _id: productId }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
     return res.status(200).send({ status: true, message: "product is sucessfully deleted" })
   }

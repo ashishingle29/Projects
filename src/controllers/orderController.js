@@ -1,6 +1,6 @@
 const cartModel = require('../models/cartModel')
 const orderModel = require('../models/orderModel')
-const { validObjectId } = require('../validator/validation')
+const { validObjectId,validValue } = require('../validator/validation')
 
 
 
@@ -59,7 +59,8 @@ const UpdateOrder = async function (req, res) {
 
         if (!orderId) { return res.status(400).send({ status: false, message: "OrderId is mandatory in body" }); }
         if (!status) { return res.status(400).send({ status: false, message: "Status is mandatory in body" }); }
-        
+        if (!validValue(orderId)) { return res.status(400).send({ status: false, message: "OrderId should be in string format only" }); }
+        if (!validValue(status)) { return res.status(400).send({ status: false, message: "Status should be in string format only" }); }
         if (!validObjectId(orderId)) { return res.status(400).send({ status: false, message: "Please Provide a valid orderId" }); }
         
         if (status != "completed" && status != "canceled") { return res.status(400).send({ status: false, message: "Status is only accepted in completed or canceled" }); }

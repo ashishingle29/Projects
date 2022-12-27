@@ -29,7 +29,7 @@ const createOrder = async function(req,res){
             items: cartCheck.items,
             totalPrice: cartCheck.totalPrice,
             totalItems: cartCheck.totalItems,
-            totalQuantity:totalQuantity,
+            totalQuantity:totalQuantity
         }
 
         const order = await orderModel.create(obj)
@@ -45,37 +45,24 @@ const createOrder = async function(req,res){
 const UpdateOrder = async function(req,res){
     try{
      const userId = req.params.userId;
-     if(!isValidObjectId(userId)){
-        return res.status(400).send({status:false,message:"Please Provide Valid User Id"})
-     }
+     if(!isValidObjectId(userId)){return res.status(400).send({status:false,message:"Please Provide Valid User Id"})}
      
      const data = req.body
       const {orderId,status} = data
 
       if (Object.keys(data).length == 0 ) { return res.status(400).send({ status: false, message: "Please give some data" }); }
   
-       const UpdateObj = {}
-       if(!orderId){
-        return res.status(400).send({status:false,message:"OrderId is required in body"})
-       }
-       if(!isValidObjectId(orderId)){
-        return res.status(400).send({status:false,message:"Please Provide Valid orderId"})
-     }
-
+      if(!orderId){return res.status(400).send({status:false,message:"OrderId is required in body"})}
+      if(!isValidObjectId(orderId)){return res.status(400).send({status:false,message:"Please Provide Valid orderId"})}
+      
       const findOrder = await orderModel.findOne({_id:orderId,isDeleted:false})
-      if(!findOrder){
-        return res.status(404).send({status:false,message:"order not Exist with this OrderId"})
-      }
- 
-       if(!status){
-        return res.status(400).send({status:false,message:"status is required in body"})
-       }
-
-       if(status != "completed" && status !="canceled"){
-        return res.status(400).send({status:false,message:"status is only accepted in Completed or canceled"})
-       }
-
-
+      if(!findOrder){return res.status(404).send({status:false,message:"order not Exist with this OrderId"})}
+      
+      if(!status){return res.status(400).send({status:false,message:"status is required in body"})}
+      
+      if(status != "completed" && status !="canceled"){return res.status(400).send({status:false,message:"status is only accepted in Completed or canceled"})}
+      
+      const UpdateObj = {}
        UpdateObj.status = status
 
        if(findOrder.status == "completed" || findOrder.status == "canceled"){
@@ -84,9 +71,8 @@ const UpdateOrder = async function(req,res){
     
 
 
-     if(findOrder.cancellable == false){
-        return res.status(400).send({ status: false, message: "this Order is not  Provide cancellable Policy" });
-     }      
+     if(findOrder.cancellable == false){return res.status(400).send({ status: false, message: "this Order is not  Provide cancellable Policy" });}      
+     
      let updateData = await orderModel.findOneAndUpdate({ _id: orderId },{ $set: UpdateObj },{ new: true });
   
       return res.status(200).send({ status: true, message: "Success", data: updateData });

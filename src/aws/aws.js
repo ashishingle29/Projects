@@ -22,7 +22,6 @@ let uploadFile = async (file) =>{
                 return reject({"error":err})
             }
 
-            console.log(file.buffer)
             console.log("File uploaded succesfully")
             return resolve(data.Location)
         }) 

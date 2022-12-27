@@ -15,6 +15,10 @@ const validEmail = function (email) {
     return emailRegex.test(email)
 }
 
+const isValidBody = function (object) {
+    return Object.keys(object).length > 0;
+}
+
 const validValue = function (data) {
     if (typeof (data) === undefined || typeof (data) === null) { return false }
     if (typeof (data) === "string" && data.trim().length > 0) { return true }
@@ -40,4 +44,4 @@ const isValidImg = (img) => {
     return reg.test(img);
   };
 
-module.exports = { validName, validPhone, validEmail, validValue, validPincode,isValidImg, validPassword, validObjectId }
+module.exports = { validName, validPhone, validEmail, validValue, validPincode,isValidImg, validPassword, validObjectId, isValidBody }

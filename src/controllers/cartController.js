@@ -10,7 +10,7 @@ const createCart = async (req,res) =>{
     try{
     
         const userId = req.params.userId;
-        if(!isValidObjectId)return res.status(400).send({status:false,message:"userId is not Valid"})
+        if(!isValidObjectId(userId))return res.status(400).send({status:false,message:"userId is not Valid"})
     
         const data = req.body;
         const{productId,cartId}= data
@@ -28,7 +28,7 @@ const createCart = async (req,res) =>{
 
         if(cartId){
          if (!validValue(cartId)) { return res.status(400).status({ status: false, message: "cardId should not be empty" })}  
-         if(!isValidObjectId(productId))return res.status(400).send({status:false,message:"Please provide a valid cartId"})
+         if(!isValidObjectId(cartId))return res.status(400).send({status:false,message:"Please provide a valid cartId"})
         }
         //....................cartId....................................
 
@@ -84,23 +84,25 @@ const updateCart = async function (req,res){
         const userId = req.params.userId
         const data = req.body
         let {cartId, productId,removeProduct} = data
+
         if(Object.keys(data).length == 0){return res.status(400).send({status:false, message: "Please provide some Data"})}
 
         if(!cartId){ return res.status(400).send({status: false, message: "CartId is required"})}
         if(!isValidObjectId(cartId)) { return res.status(400).send({status: false, message: "Please provide valid cartId"})}
+
         const cartCheck = await cartModel.findById({_id:cartId})
         if(!cartCheck){ return res.status(404).send({status: false, message: "cartId not found"})} 
 
         if(!productId){ return res.status(400).send({status: false, message: "productId is required"})}
         if(!isValidObjectId(productId)) { return res.status(400).send({status: false, message: "Please provide valid productId"})}
+
         const productCheck = await productModel.findOne({_id:productId, isDeleted:false})
         if(!productCheck){ return res.status(404).send({status: false, message: "productId not found"})} 
         
-        if(!removeProduct){ return res.status(400).send({status: false, message: "removeProduct is required"})}
         if(removeProduct != 0 && removeProduct != 1){ return res.status(400).send({status:false, message: "please input a Number 0 or 1 in removeProduct Key"})}
         if(cartCheck.items.length ==0){ return res.status(400).send({status: false, message: "No product found in items"})}
 
-        if(removeProduct == 0){
+        if(removeProduct == 0){ 
             for(let i= 0; i< cartCheck.items.length; i++){
                 if(cartCheck.items[i].productId == productId){
                     const ProductPrice = productCheck.price * cartCheck.items[i].quantity
@@ -114,27 +116,28 @@ const updateCart = async function (req,res){
         }else if(removeProduct == 1){
             for(let i= 0; i< cartCheck.items.length; i++){
                 if(cartCheck.items[i].productId == productId){
-                const quantityUpdate = cartCheck.items[i].quantity -1
-
+                    const quantityUpdate = cartCheck.items[i].quantity -1
+                    
                     if(quantityUpdate < 1){
                         const ProductPrice = productCheck.price * cartCheck.items[i].quantity
-                    const finalprice = cartCheck.totalPrice - ProductPrice
-                    cartCheck.items.splice(i,1)
-                    const totalItems = cartCheck.totalItems -1 
+                        const finalprice = cartCheck.totalPrice - ProductPrice
+                        cartCheck.items.splice(i,1)
+                        const totalItems = cartCheck.totalItems -1 
                     const finalPriceAndUpdate = await cartModel.findOneAndUpdate({userId:userId},{items: cartCheck.items,totalPrice: finalprice, totalItems: totalItems}, {new:true}).select({'items._id':0})
                     return res.status(200).send({ status: true, message: "Success", data: finalPriceAndUpdate });
                     
-                }else{
- 
-                        const finalprice = cartCheck.totalPrice - productCheck.price
-                        const totalItems = cartCheck.totalItems
-                        cartCheck.items[i].quantity = quantityUpdate
-
-                        const finalPriceAndUpdate = await cartModel.findOneAndUpdate({userId:userId},{items: cartCheck.items,totalPrice: finalprice, totalItems: totalItems}, {new:true}).select({'items._id':0})
+                    }else{
+                    
+                    const finalprice = cartCheck.totalPrice - productCheck.price
+                    const totalItems = cartCheck.totalItems
+                    cartCheck.items[i].quantity = quantityUpdate
+                    
+                    const finalPriceAndUpdate = await cartModel.findOneAndUpdate({userId:userId},{items: cartCheck.items,totalPrice: finalprice, totalItems: totalItems}, {new:true}).select({'items._id':0})
                     return res.status(200).send({ status: true, message: "Success", data: finalPriceAndUpdate });
                     }
-                }
             }
+        }
+        return res.status(400).send({status: false, message: "No productId found in items"})
 
         }
 

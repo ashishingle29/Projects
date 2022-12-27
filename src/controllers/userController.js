@@ -2,7 +2,7 @@ const uploadFile = require("../aws/aws");
 const bcrypt = require("bcrypt");
 const userModel = require("../models/userModel");
 const jwt = require("jsonwebtoken");
-const { validPhone, validEmail, validValue, isValidImg,validName, validPincode, validObjectId, validPassword } = require("../validator/validation");
+const { validPhone, validEmail, validValue, isValidImg,validName, validPincode, validObjectId, validPassword, isValidBody } = require("../validator/validation");
 
 //-------------------------------------[ CREATE USER ]---------------------------------------//
 
@@ -16,38 +16,36 @@ const createUser = async function (req, res) {
     let { fname, lname, email, phone, password, address } = data;
 
     if (!fname) { return res.status(400).send({ status: false, message: "FirstName is mandatory" }); }
-    if (!validName(fname.trim())) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
-
     if (!lname) { return res.status(400).send({ status: false, message: "lastName is mandatory" }); }
+    if (!email) { return res.status(400).send({ status: false, message: "Email is mandatory" }); }
+    if (!phone) { return res.status(400).send({ status: false, message: "Phone is mandatory" }); }
+    if (file && file.length == 0) { return res.status(400).send({ status: false, message: "ProfileImage is a mandatory" }); }
+    if (!password) { return res.status(400).send({ status: false, message: "Password is mandatory" }); }
+    if (!address) { return res.status(400).send({ status: false, message: "Address is required" }); }
+    
+    address = JSON.parse(address)
+    let { shipping, billing } = address
+    if (!shipping) { return res.status(400).send({ status: false, message: "Shipping Address is mandatory" }); }
+    if (!billing) { return res.status(400).send({ status: false, message: "Billing Address is required" }); }
+
+    if (!validName(fname.trim())) { return res.status(400).send({ status: false, message: "FirstName should be in alphabets only" }); }
     if (!validName(lname.trim())) { return res.status(400).send({ status: false, message: "LastName should be in alphabets only" }); }
 
-    if (!email) { return res.status(400).send({ status: false, message: "Email is mandatory" }); }
     if (!validEmail(email)) { return res.status(400).send({ status: false, message: "Please provide correct email" }); }
-
     let findEmail = await userModel.findOne({ email });
     if (findEmail) { return res.status(400).send({ status: false, message: "User with this email already exists" }); }
 
-    if (file && file.length == 0) { return res.status(400).send({ status: false, message: "ProfileImage is a mandatory" }); }
-    
-    if (!phone) { return res.status(400).send({ status: false, message: "Phone is mandatory" }); }
     if (!validPhone(phone)) { return res.status(400).send({ status: false, message: "Please provide correct phone number" }); }
-    
     let findPhone = await userModel.findOne({ phone });
     if (findPhone) { return res.status(400).send({ status: false, message: "User with this phone number already exists" }); }
     
-    if (!password) { return res.status(400).send({ status: false, message: "Password is mandatory" }); }
     if (!validPassword(password)) { return res.status(400).send({ status: false, message: "Password Should be (8-15) in length with one upperCase, special character and number" }); }
+
+  
     //..hashing
     const saltRounds = 10;
     const hash = bcrypt.hashSync(password, saltRounds)
 
-    if (!address) { return res.status(400).send({ status: false, message: "Address is required" }); }
-
-    address = JSON.parse(address)
-
-    let { shipping, billing } = address
-
-    if (!shipping) { return res.status(400).send({ status: false, message: "Shipping Address is mandatory" }); }
     if (shipping) {
       if (!shipping.street) { return res.status(400).send({ status: false, message: "Shipping Street is mandatory" }); }
       if (!validValue(shipping.street)) { return res.status(400).send({ status: false, Message: "Please provide street name in string format" }); }
@@ -59,7 +57,6 @@ const createUser = async function (req, res) {
       if (!validPincode(shipping.pincode)) { return res.status(400).send({ status: false, Message: "Please provide pincode in number format" }); }
     }
 
-    if (!billing) { return res.status(400).send({ status: false, message: "Billing Address is required" }); }
     if (billing) {
       if (!billing.street) { return res.status(400).send({ status: false, message: "Billing Street is mandatory" }); }
       if (!validValue(billing.street)) { return res.status(400).send({ status: false, Message: "Please provide street name in string format" }); }
@@ -156,7 +153,8 @@ const updateUser = async function (req, res) {
 
     const data = req.body;
     const file = req.files
-    if (Object.keys(data).length == 0) { return res.status(400).send({ status: false, message: "Please give some data" }); }
+    if (!isValidBody(data) && (typeof(file)=="undefined")) { return res.status(400).send({ status: false, message: "Please give some data" }); }
+
     let { fname, lname, email, phone, password, address } = data;
     
     const newobj ={}
@@ -198,7 +196,6 @@ const updateUser = async function (req, res) {
 
     let { shipping, billing } = address
 
-    if (!shipping) { return res.status(400).send({ status: false, message: "Shipping Address is mandatory" }); }
     if (shipping) {
 
       if(shipping.street){
@@ -216,15 +213,15 @@ const updateUser = async function (req, res) {
 
     if (billing) {
 
-      if(shipping.street){
+      if(billing.street){
       if (!validValue(billing.street)) { return res.status(400).send({ status: false, Message: "Please provide street name in string format" }); }
       }
       
-      if(shipping.city){
+      if(billing.city){
       if (!validValue(billing.city)) { return res.status(400).send({ status: false, Message: "Please provide city name in string format" }); }
       }
 
-      if(shipping.pincode){
+      if(billing.pincode){
       if (!validPincode(billing.pincode)) { return res.status(400).send({ status: false, Message: "Please provide pincode in number format" }); }
       }
     }

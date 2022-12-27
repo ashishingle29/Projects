@@ -30,10 +30,6 @@ router.post('/users/:userId/orders',authentication,authorization,orderController
 router.put('/users/:userId/orders',authentication,authorization,orderController.UpdateOrder)
 
 
-
-
-
-
 router.all('/*', function(req,res){
   res.status(400).send({status: false, message: "Invalid HTTP request"});
 })

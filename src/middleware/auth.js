@@ -11,8 +11,7 @@ const authentication = async function(req,res,Next){
         if (!token) {
           return res.status(400).send({ status: false, message: "Token must be present." });
         }
-        
-        //  token = token.split(" ")[1]
+      
         token = token.replace("Bearer ","")
        
 

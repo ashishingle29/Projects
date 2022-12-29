@@ -250,6 +250,7 @@ const updateProduct = async function (req, res) {
       if (!present) {
         return res.status(400).send({ status: false, message: "Enter a valid size S or XS or M or X or L or XXL or XL ", });
       }
+      
       Updateobj['availableSizes'] = size
     }
 

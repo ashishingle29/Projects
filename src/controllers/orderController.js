@@ -75,7 +75,7 @@ const UpdateOrder = async function (req, res) {
             return res.status(400).send({ status: false, message: "Your order Status is already updated. Now You can't change" });
         }
 
-        if (findOrder.cancellable == false) { return res.status(400).send({ status: false, message: "This order is not provided cancellable Policy" }); }
+        if (findOrder.cancellable == false && status == "canceled") { return res.status(400).send({ status: false, message: "This order is not provided cancellable Policy" }); }
 
         let updateData = await orderModel.findOneAndUpdate({ _id: orderId }, { $set: UpdateObj }, { new: true });
 
